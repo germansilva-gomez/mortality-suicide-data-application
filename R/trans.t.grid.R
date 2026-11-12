@@ -25,16 +25,16 @@
 }
 
 trans.t.grid <- function(t.grid, O.t, E.t, E.tz, par.ini) {
-  # O.t es el vector marginal del tiempo de ocurrencias
-  # E.t es el vector marginal del tiempo de expuestos a las ocurrencias
 
   nrow <- length(t.grid)
 
   t.grid.modif <- rep(0, nrow)
   hazard.par <- rep(0, nrow)
 
+  invisible(capture.output(
   res <- solnp(par.ini, .loglik,
                t = t.grid, O = O.t, E = E.t, LB = c(-Inf, 0, 0, 0), UB = c(Inf, Inf, Inf, Inf))
+  ))
 
   a0 <- res$par[1]
   a1 <- res$par[2]
@@ -65,5 +65,5 @@ trans.t.grid <- function(t.grid, O.t, E.t, E.tz, par.ini) {
 
   E.tz.modif <- E.tz*t.grid.modif.diff/diff(t.grid)[1]
 
-  return(list(t.grid.modif=t.grid.modif, E.tz.modif=E.tz.modif, hi.tz.par = hazard.par, res = res))
+  return(list(t.grid.modif=t.grid.modif, E.tz.modif=E.tz.modif, hi.tz.par = hazard.par, pars = res$pars))
 }
